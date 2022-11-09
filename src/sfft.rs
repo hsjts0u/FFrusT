@@ -24,8 +24,8 @@ pub fn bitrp(x: &mut[nc::Complex<f32>], n: i64) {
 }
 
 pub fn fft(x: &mut [nc::Complex<f32>], n: i64) {
-    let N: usize = n as usize; // not sure about the correctness
-    let mut w = vec![nc::Complex::new(1.0, 0.0); N / 2];
+    // let N: usize = n as usize; // not sure about the correctness
+    let mut w = vec![nc::Complex::new(1.0, 0.0); n as usize / 2];
 
     bitrp(&mut x[..], n);
 
@@ -62,8 +62,8 @@ pub fn fft(x: &mut [nc::Complex<f32>], n: i64) {
 }
 
 pub fn ifft(x: &mut [nc::Complex<f32>], n: i64) {
-    let N: usize = n as usize; // not sure about the correctness
-    let mut w = vec![nc::Complex::new(1.0, 0.0); N / 2];
+    // let N: usize = n as usize; // not sure about the correctness
+    let mut w = vec![nc::Complex::new(1.0, 0.0); n as usize / 2];
 
     bitrp(&mut x[..], n);
 

@@ -1,7 +1,6 @@
 mod sfft;
 
 use hound;
-use crate::sfft::*;
 use num_complex as nc;
 
 fn main() {
@@ -23,8 +22,8 @@ fn main() {
         println!("{}", samples[idx] as f32);
     }
     
-    fft(&mut sample_complex[..], 16);
-    ifft(&mut sample_complex[..], 16);
+    sfft::fft(&mut sample_complex[..], 16);
+    sfft::ifft(&mut sample_complex[..], 16);
 
     for i in sample_complex.iter() {
         println!("{} {}", i.re, i.im)
