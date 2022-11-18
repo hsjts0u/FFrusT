@@ -22,10 +22,9 @@ fn reorder(complex_data: &mut Vec<Complex<f32>>, log2n: u64) {
 fn cooley_tukey(complex_data: &mut Vec<Complex<f32>>, inv: bool) {
     let sign = if inv { 1.0 } else { -1.0 };
     let mut log2n: u64 = 0;
-    let mut n = complex_data.len();
-    while n != 1 {
+    let n = complex_data.len();
+    while (1 << log2n) < n {
         log2n += 1;
-        n >>= 1;
     }
 
     reorder(complex_data, log2n);
@@ -57,7 +56,6 @@ pub fn fft(complex_data: &mut Vec<Complex<f32>>) {
 
 pub fn ifft(complex_data: &mut Vec<Complex<f32>>) {
     cooley_tukey(complex_data, true);
-    for s in 0..complex_data.len() {
-        complex_data[s].re = complex_data[s].re / complex_data.len() as f32;
-    }
+    let n = complex_data.len() as f32;
+    complex_data.iter_mut().for_each(|x| *x = *x / n);
 }
