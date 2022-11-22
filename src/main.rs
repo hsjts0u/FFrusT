@@ -12,10 +12,10 @@ fn main() {
 
     let mut complex_data = utils::initialize(&samples);
 
-    rfft::fft(&mut complex_data);
+    pfft::fft(&mut complex_data);
 
     let start = Instant::now();
-    rfft::ifft(&mut complex_data);
+    pfft::ifft(&mut complex_data);
     let elapsed = start.elapsed();
     println!("Time elapsed: {} ms", elapsed.as_millis());
 
