@@ -1,5 +1,4 @@
 use num_complex::Complex;
-use rayon::prelude::*;
 use std::f64::consts::PI;
 
 fn rfft(complex_data: &mut Vec<Complex<f64>>, inv: bool) {
@@ -47,7 +46,7 @@ fn comp_mult_im(a_re: f64, a_im: f64, b_re: f64, b_im: f64) -> f64 {
     return (a_re * b_im) + (a_im * b_re);
 }
 
-fn simd_rfft(data_re: &mut Vec<f64>, data_im: &mut Vec<f64>, inv: bool) {
+fn simd_rfft(data_re: &mut Vec<f64>, data_im: &mut Vec<f64>, inv: bool, rayon: bool) {
     if data_re.len() != data_im.len() {
         return;
     }
@@ -71,10 +70,15 @@ fn simd_rfft(data_re: &mut Vec<f64>, data_im: &mut Vec<f64>, inv: bool) {
         a1_im.push(data_im[2 * i + 1]);
     }
 
-    rayon::join(
-        || simd_rfft(&mut a0_re, &mut a0_im, inv),
-        || simd_rfft(&mut a1_re, &mut a1_im, inv),
-    );
+    if rayon {
+        rayon::join(
+            || simd_rfft(&mut a0_re, &mut a0_im, inv, true),
+            || simd_rfft(&mut a1_re, &mut a1_im, inv, true),
+        );
+    } else {
+        simd_rfft(&mut a0_re, &mut a0_im, inv, false);
+        simd_rfft(&mut a1_re, &mut a1_im, inv, false)
+    }
 
     let mut w_re = 1.0;
     let mut w_im = 0.0;
@@ -99,22 +103,34 @@ fn simd_rfft(data_re: &mut Vec<f64>, data_im: &mut Vec<f64>, inv: bool) {
     }
 }
 
-pub fn fft(complex_data: &mut Vec<Complex<f64>>) {
+pub fn rayon_fft(complex_data: &mut Vec<Complex<f64>>) {
     rfft(complex_data, false);
 }
 
-pub fn ifft(complex_data: &mut Vec<Complex<f64>>) {
+pub fn rayon_ifft(complex_data: &mut Vec<Complex<f64>>) {
     rfft(complex_data, true);
 }
 
 pub fn simd_fft(complex_data: &mut Vec<Complex<f64>>) {
     let mut data_re: Vec<f64> = complex_data.into_iter().map(|x| x.re).collect();
     let mut data_im: Vec<f64> = complex_data.into_iter().map(|x| x.im).collect();
-    simd_rfft(&mut data_re, &mut data_im, false);
+    simd_rfft(&mut data_re, &mut data_im, false, false);
 }
 
 pub fn simd_ifft(complex_data: &mut Vec<Complex<f64>>) {
     let mut data_re: Vec<f64> = complex_data.into_iter().map(|x| x.re).collect();
     let mut data_im: Vec<f64> = complex_data.into_iter().map(|x| x.im).collect();
-    simd_rfft(&mut data_re, &mut data_im, true);
+    simd_rfft(&mut data_re, &mut data_im, true, false);
+}
+
+pub fn rayon_simd_fft(complex_data: &mut Vec<Complex<f64>>) {
+    let mut data_re: Vec<f64> = complex_data.into_iter().map(|x| x.re).collect();
+    let mut data_im: Vec<f64> = complex_data.into_iter().map(|x| x.im).collect();
+    simd_rfft(&mut data_re, &mut data_im, false, true);
+}
+
+pub fn rayon_simd_ifft(complex_data: &mut Vec<Complex<f64>>) {
+    let mut data_re: Vec<f64> = complex_data.into_iter().map(|x| x.re).collect();
+    let mut data_im: Vec<f64> = complex_data.into_iter().map(|x| x.im).collect();
+    simd_rfft(&mut data_re, &mut data_im, true, true);
 }
