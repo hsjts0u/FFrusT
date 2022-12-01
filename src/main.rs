@@ -15,7 +15,7 @@ fn main() {
 
     pfft::fft(&mut complex_data);
     //for i in 100..800 {
-        freq_scale::scaledown(&mut complex_data, reader.spec().sample_rate, 441);
+    //    freq_scale::scaledown(&mut complex_data, reader.spec().sample_rate, 441);
     //}
     
     let start = Instant::now();
@@ -26,6 +26,10 @@ fn main() {
     let spec = reader.spec();
     let mut writer = hound::WavWriter::create("serial_reconstruct.wav", spec).unwrap();
     for s in 0..samples.len() {
+        let diff = samples[s] - complex_data[s].re as i16;
+        if diff != 0 {
+            println!("{}", diff);
+        }
         writer.write_sample(complex_data[s].re as i16).unwrap();
     }
 }

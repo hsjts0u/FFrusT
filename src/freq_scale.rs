@@ -1,9 +1,9 @@
 use num_complex::Complex;
 
-pub fn scaledown(complex_data: &mut Vec<Complex<f32>>, sample_rate: u32, freq: i32) {
-    let points_per_freq = complex_data.len() as f32 / sample_rate as f32;
+pub fn scaledown(complex_data: &mut Vec<Complex<f64>>, sample_rate: u32, freq: i32) {
+    let points_per_freq = complex_data.len() as f64 / sample_rate as f64;
 
-    let target_idx = points_per_freq * freq as f32;
+    let target_idx = points_per_freq * freq as f64;
     let target_idx_n = complex_data.len() - target_idx as usize;
 
     let start = target_idx as usize - 100;

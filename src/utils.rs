@@ -1,8 +1,8 @@
 use num_complex::Complex;
 
-pub fn initialize<T>(real_data: &Vec<T>) -> Vec<Complex<f32>>
+pub fn initialize<T>(real_data: &Vec<T>) -> Vec<Complex<f64>>
 where
-    T: Into<f32> + Copy,
+    T: Into<f64> + Copy,
 {
     let mut len = real_data.len();
     if len & (len - 1) != 0 {

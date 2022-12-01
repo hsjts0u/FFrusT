@@ -1,7 +1,7 @@
 use num_complex::Complex;
-use std::f32::consts::PI;
+use std::f64::consts::PI;
 
-fn rfft(complex_data: &mut Vec<Complex<f32>>, inv: bool) {
+fn rfft(complex_data: &mut Vec<Complex<f64>>, inv: bool) {
     let n = complex_data.len();
     if n == 1 {
         return;
@@ -22,8 +22,8 @@ fn rfft(complex_data: &mut Vec<Complex<f32>>, inv: bool) {
 
     let mut w = Complex { re: 1.0, im: 0.0 };
     let wn = Complex {
-        re: f32::cos(sign * 2.0 * PI / n as f32),
-        im: f32::sin(sign * 2.0 * PI / n as f32),
+        re: f64::cos(sign * 2.0 * PI / n as f64),
+        im: f64::sin(sign * 2.0 * PI / n as f64),
     };
 
     for i in 0..n / 2 {
@@ -37,10 +37,10 @@ fn rfft(complex_data: &mut Vec<Complex<f32>>, inv: bool) {
     }
 }
 
-pub fn fft(complex_data: &mut Vec<Complex<f32>>) {
+pub fn fft(complex_data: &mut Vec<Complex<f64>>) {
     rfft(complex_data, false);
 }
 
-pub fn ifft(complex_data: &mut Vec<Complex<f32>>) {
+pub fn ifft(complex_data: &mut Vec<Complex<f64>>) {
     rfft(complex_data, true);
 }
