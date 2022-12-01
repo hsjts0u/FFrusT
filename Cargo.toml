@@ -9,3 +9,6 @@ edition = "2021"
 hound = "3.5.0"
 num-complex = "0.4.2"
 rayon = "1.5.3"
+
+[build]
+rustflags = ["-C target-feature=+avx2"]
