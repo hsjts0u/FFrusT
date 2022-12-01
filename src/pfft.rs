@@ -18,9 +18,6 @@ fn rfft(complex_data: &mut Vec<Complex<f32>>, inv: bool) {
         a1.push(complex_data[2 * i + 1]);
     }
 
-    //rfft(&mut a0, inv);
-    //rfft(&mut a1, inv);
-
     rayon::join(|| rfft(&mut a0, inv), || rfft(&mut a1, inv));
 
     let mut w = Complex { re: 1.0, im: 0.0 };

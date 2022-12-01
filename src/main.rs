@@ -5,6 +5,7 @@ mod pfft;
 mod rfft;
 mod sfft;
 mod utils;
+mod freq_scale;
 
 fn main() {
     let mut reader = hound::WavReader::open("audio/sine.wav").unwrap();
@@ -13,7 +14,10 @@ fn main() {
     let mut complex_data = utils::initialize(&samples);
 
     pfft::fft(&mut complex_data);
-
+    //for i in 100..800 {
+        freq_scale::scaledown(&mut complex_data, reader.spec().sample_rate, 441);
+    //}
+    
     let start = Instant::now();
     pfft::ifft(&mut complex_data);
     let elapsed = start.elapsed();

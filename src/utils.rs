@@ -1,6 +1,9 @@
 use num_complex::Complex;
 
-pub fn initialize(real_data: &Vec<i16>) -> Vec<Complex<f32>> {
+pub fn initialize<T>(real_data: &Vec<T>) -> Vec<Complex<f32>>
+where
+    T: Into<f32> + Copy,
+{
     let mut len = real_data.len();
     if len & (len - 1) != 0 {
         let mut base_two = 1;
@@ -15,7 +18,7 @@ pub fn initialize(real_data: &Vec<i16>) -> Vec<Complex<f32>> {
     for i in 0..len {
         let point = Complex {
             re: if i < real_data.len() {
-                real_data[i] as f32
+                real_data[i].into()
             } else {
                 0.0
             },
