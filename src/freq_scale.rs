@@ -20,5 +20,4 @@ pub fn scaledown(complex_data: &mut Vec<Complex<f64>>, sample_rate: u32, freq: i
         complex_data[i].re = 0.0;
         complex_data[i].im = 0.0;
     }
-
 }

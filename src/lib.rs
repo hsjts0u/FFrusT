@@ -8,8 +8,8 @@ pub mod utils;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test::Bencher;
     use hound;
+    use test::Bencher;
 
     #[test]
     fn test_fft() {
@@ -20,9 +20,9 @@ mod tests {
 
         sfft::fft(&mut complex_data);
         sfft::ifft(&mut complex_data);
-    
+
         let new_samples: Vec<i16> = complex_data.iter().map(|c| c.re as i16).collect();
-        
+
         let tolerance = -1..2;
         for i in 0..samples.len() {
             let diff = samples[i] - new_samples[i];
