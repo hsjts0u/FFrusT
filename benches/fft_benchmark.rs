@@ -9,9 +9,6 @@ fn test_fft(mode: u8) {
     let samples: Vec<i16> = reader.samples().map(|s| s.unwrap()).collect();
 
     let mut complex_data = utils::initialize(&samples);
-    
-    sfft::fft(&mut complex_data);
-    sfft::ifft(&mut complex_data);
 
     match mode {
         0u8 => {
@@ -52,4 +49,3 @@ pub fn criterion_benchmark(c: &mut Criterion) {
 
 criterion_group!(benches, criterion_benchmark);
 criterion_main!(benches);
-
