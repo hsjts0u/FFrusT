@@ -1,13 +1,10 @@
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{criterion_group, criterion_main, BatchSize, Criterion};
 
 use ffrust::sfft;
 use ffrust::pfft;
 use ffrust::utils;
 
-fn test_fft(mode: u8) {
-    let mut reader = hound::WavReader::open("audio/sine.wav").unwrap();
-    let samples: Vec<i16> = reader.samples().map(|s| s.unwrap()).collect();
-
+fn bench_fft(mode: u8, samples: &mut Vec<i16>) {
     let mut complex_data = utils::initialize(&samples);
 
     match mode {
@@ -29,22 +26,36 @@ fn test_fft(mode: u8) {
         },
         _ => { }
     }
+}
 
-    let new_samples: Vec<i16> = complex_data.iter().map(|c| c.re as i16).collect();
-
-    let tolerance = -1..2;
-
-    for i in 0..samples.len() {
-        let diff = samples[i] - new_samples[i];
-        assert!(tolerance.contains(&diff));
-    }
+fn criterion_with_custom_sample_size() -> Criterion {
+    Criterion::default()
+        .with_output_color(true)
+        .sample_size(20)
 }
 
 pub fn criterion_benchmark(c: &mut Criterion) {
-    c.bench_function("serial fft", |b| b.iter(|| test_fft(0)));
-    c.bench_function("parallel fft -- rayon", |b| b.iter(|| test_fft(1)));
-    c.bench_function("parallel fft -- SIMD", |b| b.iter(|| test_fft(2)));
-    c.bench_function("parallel fft -- rayon & SIMD", |b| b.iter(|| test_fft(3)));
+    let mut reader = hound::WavReader::open("audio/rr.wav").unwrap();
+    let samples: Vec<i16> = reader.samples().map(|s| s.unwrap()).collect();
+
+    *c = criterion_with_custom_sample_size();
+
+    c.bench_function("serial fft", |b| {
+        b.iter_batched(|| samples.clone(), |mut samples| bench_fft(0, &mut samples),
+                       BatchSize::SmallInput)
+    });
+    c.bench_function("parallel fft -- rayon", |b| {
+        b.iter_batched(|| samples.clone(), |mut samples| bench_fft(1, &mut samples),
+                       BatchSize::SmallInput)
+    });
+    c.bench_function("parallel fft -- SIMD", |b| {
+        b.iter_batched(|| samples.clone(), |mut samples| bench_fft(2, &mut samples),
+                       BatchSize::SmallInput)
+    });
+    c.bench_function("parallel fft -- rayon & SIMD", |b| {
+        b.iter_batched(|| samples.clone(), |mut samples| bench_fft(3, &mut samples),
+                       BatchSize::SmallInput)
+    });
 }
 
 criterion_group!(benches, criterion_benchmark);
