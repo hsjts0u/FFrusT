@@ -5,6 +5,13 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "fft_benchmark"
+harness = false
+
 [dependencies]
 hound = "3.5.0"
 num-complex = "0.4.2"
