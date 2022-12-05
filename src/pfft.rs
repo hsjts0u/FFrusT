@@ -36,12 +36,12 @@ fn rfft(complex_data: &mut Vec<Complex<f64>>, inv: bool) {
     }
 }
 
-#[inline]
+#[inline(always)]
 fn comp_mult_re(a_re: f64, a_im: f64, b_re: f64, b_im: f64) -> f64 {
     return (a_re * b_re) - (a_im * b_im);
 }
 
-#[inline]
+#[inline(always)]
 fn comp_mult_im(a_re: f64, a_im: f64, b_re: f64, b_im: f64) -> f64 {
     return (a_re * b_im) + (a_im * b_re);
 }
