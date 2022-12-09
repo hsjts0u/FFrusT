@@ -25,7 +25,7 @@ fn main() {
     let samples: Vec<i16> = reader.samples().map(|s| s.unwrap()).collect();
 
     let mut complex_data = utils::initialize(&samples);
-    let bench_niter = 2;
+    let bench_niter = 1;
     bench_fft!(
         sfft::fft(&mut complex_data),
         sfft::ifft(&mut complex_data),
@@ -44,6 +44,13 @@ fn main() {
         pfft::rayon_fft(&mut complex_data),
         pfft::rayon_ifft(&mut complex_data),
         bench_niter, "Rayon"
+    );
+
+    let mut complex_data = utils::initialize(&samples);
+    bench_fft!(
+        pfft::simd_fft(&mut complex_data),
+        pfft::simd_ifft(&mut complex_data),
+        bench_niter, "SIMD"
     );
 
     let mut complex_data = utils::initialize(&samples);
