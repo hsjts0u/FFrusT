@@ -4,7 +4,6 @@ mod rfft;
 mod sfft;
 mod utils;
 
-use ffrust::utils::dump_result;
 use rustfft::FftPlanner;
 use std::time::Instant;
 use std::env;
@@ -44,7 +43,7 @@ fn main() {
         result.push(elapsed);
     }
     println!();
-    dump_result("serial", &mut result, output_filename).unwrap();
+    utils::dump_result("serial", &mut result, output_filename).unwrap();
 
     let mut complex_data = utils::initialize(&samples);
     let mut result = Vec::new();
@@ -58,7 +57,7 @@ fn main() {
         result.push(elapsed);
     }
     println!();
-    dump_result("recursive", &mut result, output_filename).unwrap();
+    utils::dump_result("recursive", &mut result, output_filename).unwrap();
 
     let mut complex_data = utils::initialize(&samples);
     let mut result = Vec::new();
@@ -72,7 +71,7 @@ fn main() {
         result.push(elapsed);
     }
     println!();
-    dump_result("rayon", &mut result, output_filename).unwrap();
+    utils::dump_result("rayon", &mut result, output_filename).unwrap();
 
     let mut complex_data = utils::initialize(&samples);
     let mut result = Vec::new();
@@ -86,7 +85,7 @@ fn main() {
         result.push(elapsed);
     }
     println!();
-    dump_result("simd", &mut result, output_filename).unwrap();
+    utils::dump_result("simd", &mut result, output_filename).unwrap();
 
     let mut complex_data = utils::initialize(&samples);
     let mut result = Vec::new();
@@ -100,7 +99,7 @@ fn main() {
         result.push(elapsed);
     }
     println!();
-    dump_result("rayon simd", &mut result, output_filename).unwrap();
+    utils::dump_result("rayon simd", &mut result, output_filename).unwrap();
 
     let mut planner = FftPlanner::<f64>::new();
     let mut complex_data = utils::initialize(&samples);
@@ -118,5 +117,5 @@ fn main() {
         result.push(elapsed);
     }
     println!();
-    dump_result("rustfft", &mut result, output_filename).unwrap();
+    utils::dump_result("rustfft", &mut result, output_filename).unwrap();
 }
