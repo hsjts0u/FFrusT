@@ -33,14 +33,15 @@ where
     a
 }
 
-pub fn dump_result(complex_data: &mut Vec<Duration>, filename: &str) -> std::io::Result<()> {
+pub fn dump_result(method: &str, times: &mut Vec<Duration>, filename: &str) -> std::io::Result<()> {
     let mut buf = OpenOptions::new()
         .append(true)
         .create(true)
         .open(filename)?;
-    for (idx, t) in complex_data.iter().enumerate() {
+    buf.write_fmt(format_args!("{}, ", method))?;
+    for (idx, t) in times.iter().enumerate() {
         buf.write_fmt(format_args!("{}", &t.as_secs_f32()))?;
-        if idx != complex_data.len() - 1 {
+        if idx != times.len() - 1 {
             buf.write(b", ")?;
         } else {
             buf.write(b"\n")?;
