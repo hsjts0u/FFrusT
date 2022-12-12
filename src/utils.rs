@@ -1,3 +1,6 @@
+use std::io::prelude::*;
+use std::{fs::OpenOptions, time::Duration};
+
 use num_complex::Complex;
 
 pub fn initialize<T>(real_data: &Vec<T>) -> Vec<Complex<f64>>
@@ -28,4 +31,20 @@ where
     }
 
     a
+}
+
+pub fn dump_result(complex_data: &mut Vec<Duration>, filename: &str) -> std::io::Result<()> {
+    let mut buf = OpenOptions::new()
+        .append(true)
+        .create(true)
+        .open(filename)?;
+    for (idx, t) in complex_data.iter().enumerate() {
+        buf.write_fmt(format_args!("{}", &t.as_secs_f32()))?;
+        if idx != complex_data.len() - 1 {
+            buf.write(b", ")?;
+        } else {
+            buf.write(b"\n")?;
+        }
+    }
+    Ok(())
 }
