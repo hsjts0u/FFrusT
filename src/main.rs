@@ -6,8 +6,8 @@ mod splitfft;
 mod utils;
 
 use rustfft::FftPlanner;
-use std::time::Instant;
 use std::env;
+use std::time::Instant;
 
 // macro_rules! bench_fft {
 //     ($fft: stmt, $ifft: stmt, $value: expr, $ver: expr) => {
@@ -26,7 +26,11 @@ use std::env;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let output_filename = if args.len() < 1 { &args[1] } else { "result.csv" };
+    let output_filename = if args.len() < 1 {
+        &args[1]
+    } else {
+        "result.csv"
+    };
 
     let mut reader = hound::WavReader::open("audio/rr.wav").unwrap();
     let samples: Vec<i16> = reader.samples().map(|s| s.unwrap()).collect();
@@ -103,12 +107,18 @@ fn main() {
     utils::dump_result("rayon simd", &mut result, output_filename).unwrap();
 
     let mut complex_data = utils::initialize(&samples);
-    bench_fft!(
-        splitfft::fft(&mut complex_data),
-        splitfft::ifft(&mut complex_data),
-        bench_niter,
-        "Split FFT"
-    );
+    let mut result = Vec::new();
+    print!("Split FFT Elapsed Time: ");
+    for _ in 0..bench_niter {
+        let now = Instant::now();
+        splitfft::fft(&mut complex_data);
+        splitfft::ifft(&mut complex_data);
+        let elapsed = now.elapsed();
+        print!("{:.2?} ", elapsed);
+        result.push(elapsed);
+    }
+    println!();
+    utils::dump_result("split fft", &mut result, output_filename).unwrap();
 
     let mut planner = FftPlanner::<f64>::new();
     let mut complex_data = utils::initialize(&samples);
