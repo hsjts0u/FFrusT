@@ -2,6 +2,7 @@ mod intrinfft;
 mod pfft;
 mod rfft;
 mod sfft;
+mod splitfft;
 mod utils;
 
 use rustfft::FftPlanner;
@@ -65,6 +66,14 @@ fn main() {
         intrinfft::rayon_simd_ifft(&mut complex_data),
         bench_niter,
         "Rayon SIMD"
+    );
+
+    let mut complex_data = utils::initialize(&samples);
+    bench_fft!(
+        splitfft::fft(&mut complex_data),
+        splitfft::ifft(&mut complex_data),
+        bench_niter,
+        "Split FFT"
     );
 
     let mut planner = FftPlanner::<f64>::new();

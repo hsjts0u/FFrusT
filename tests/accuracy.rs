@@ -2,6 +2,7 @@ use ffrust::intrinfft;
 use ffrust::pfft;
 use ffrust::rfft;
 use ffrust::sfft;
+use ffrust::splitfft;
 use ffrust::utils;
 use num_complex::Complex;
 
@@ -46,4 +47,9 @@ fn test_simd_fft() {
 #[test]
 fn test_rayon_simd_fft() {
     run_fft_ifft(intrinfft::rayon_simd_fft, intrinfft::rayon_simd_ifft);
+}
+
+#[test]
+fn test_split_fft() {
+    run_fft_ifft(splitfft::fft, splitfft::ifft);
 }
