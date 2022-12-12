@@ -1,3 +1,4 @@
+mod intrinfft;
 mod pfft;
 mod rfft;
 mod sfft;
@@ -51,16 +52,16 @@ fn main() {
 
     let mut complex_data = utils::initialize(&samples);
     bench_fft!(
-        pfft::simd_fft(&mut complex_data),
-        pfft::simd_ifft(&mut complex_data),
+        intrinfft::simd_fft(&mut complex_data),
+        intrinfft::simd_ifft(&mut complex_data),
         bench_niter,
         "SIMD"
     );
 
     let mut complex_data = utils::initialize(&samples);
     bench_fft!(
-        pfft::rayon_simd_fft(&mut complex_data),
-        pfft::rayon_simd_ifft(&mut complex_data),
+        intrinfft::rayon_simd_fft(&mut complex_data),
+        intrinfft::rayon_simd_ifft(&mut complex_data),
         bench_niter,
         "Rayon SIMD"
     );
