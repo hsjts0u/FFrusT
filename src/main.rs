@@ -26,7 +26,7 @@ use std::time::Instant;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let output_filename = if args.len() < 1 {
+    let output_filename = if args.len() == 2 {
         &args[1]
     } else {
         "result.csv"
@@ -34,7 +34,7 @@ fn main() {
 
     let mut reader = hound::WavReader::open("audio/rr.wav").unwrap();
     let samples: Vec<i16> = reader.samples().map(|s| s.unwrap()).collect();
-    let bench_niter = 2;
+    let bench_niter = 10;
 
     let mut complex_data = utils::initialize(&samples);
     let mut result = Vec::new();
