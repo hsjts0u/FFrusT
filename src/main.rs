@@ -45,7 +45,7 @@ fn main() {
         "result.csv"
     };
 
-    let bench_niter = 2;
+    let bench_niter = 10;
     let benchname = "audio/rr.wav";
 
     let mut result = bench_fft(sfft::fft, sfft::ifft, benchname, "Serial", bench_niter);

@@ -38,21 +38,21 @@ fn simd_rfft(data_re: &mut Vec<f64>, data_im: &mut Vec<f64>, inv: bool) {
 
     for i in 0..n / 2 {
         unsafe {
-            let v1 = _mm256_set_pd(w.re, w.im, w.re, w.im);
-            let v2 = _mm256_set_pd(a1_re[i], a1_im[i], wn.re, wn.im);
-            let neg = _mm256_set_pd(1.0, -1.0, 1.0, -1.0);
+            let v1 = _mm256_setr_pd(w.re, w.im, w.re, w.im);
+            let v2 = _mm256_setr_pd(a1_re[i], a1_im[i], wn.re, wn.im);
+            let neg = _mm256_setr_pd(1.0, -1.0, 1.0, -1.0);
             let v3 = _mm256_mul_pd(v1, v2);
             let v2 = _mm256_permute_pd::<0x5>(v2);
             let v2 = _mm256_mul_pd(v2, neg);
             let v4 = _mm256_mul_pd(v1, v2);
-            let v1 = _mm256_mul_pd(v3, v4);
+            let v1 = _mm256_hsub_pd(v3, v4);
             let a: (f64, f64, f64, f64) = mem::transmute(v1);
 
             w.re = a.2;
             w.im = a.3;
 
-            let pv = _mm256_set_pd(a0_re[i], a0_im[i], a0_re[i], a0_im[i]);
-            let qv = _mm256_set_pd(a.0, a.1, -a.0, -a.1);
+            let pv = _mm256_setr_pd(a0_re[i], a0_im[i], a0_re[i], a0_im[i]);
+            let qv = _mm256_setr_pd(a.0, a.1, -a.0, -a.1);
             let mut s = _mm256_add_pd(pv, qv);
             if inv {
                 let d = _mm256_set1_pd(2.0);
@@ -105,21 +105,21 @@ fn rayon_simd_rfft(data_re: &mut Vec<f64>, data_im: &mut Vec<f64>, inv: bool) {
 
     for i in 0..n / 2 {
         unsafe {
-            let v1 = _mm256_set_pd(w.re, w.im, w.re, w.im);
-            let v2 = _mm256_set_pd(a1_re[i], a1_im[i], wn.re, wn.im);
-            let neg = _mm256_set_pd(1.0, -1.0, 1.0, -1.0);
+            let v1 = _mm256_setr_pd(w.re, w.im, w.re, w.im);
+            let v2 = _mm256_setr_pd(a1_re[i], a1_im[i], wn.re, wn.im);
+            let neg = _mm256_setr_pd(1.0, -1.0, 1.0, -1.0);
             let v3 = _mm256_mul_pd(v1, v2);
             let v2 = _mm256_permute_pd::<0x5>(v2);
             let v2 = _mm256_mul_pd(v2, neg);
             let v4 = _mm256_mul_pd(v1, v2);
-            let v1 = _mm256_mul_pd(v3, v4);
+            let v1 = _mm256_hsub_pd(v3, v4);
             let a: (f64, f64, f64, f64) = mem::transmute(v1);
 
             w.re = a.2;
             w.im = a.3;
 
-            let pv = _mm256_set_pd(a0_re[i], a0_im[i], a0_re[i], a0_im[i]);
-            let qv = _mm256_set_pd(a.0, a.1, -a.0, -a.1);
+            let pv = _mm256_setr_pd(a0_re[i], a0_im[i], a0_re[i], a0_im[i]);
+            let qv = _mm256_setr_pd(a.0, a.1, -a.0, -a.1);
             let mut s = _mm256_add_pd(pv, qv);
             if inv {
                 let d = _mm256_set1_pd(2.0);
@@ -139,22 +139,38 @@ pub fn simd_fft(complex_data: &mut Vec<Complex<f64>>) {
     let mut data_re: Vec<f64> = complex_data.into_iter().map(|x| x.re).collect();
     let mut data_im: Vec<f64> = complex_data.into_iter().map(|x| x.im).collect();
     simd_rfft(&mut data_re, &mut data_im, false);
+    for i in 0..complex_data.len() {
+        complex_data[i].re = data_re[i];
+        complex_data[i].im = data_im[i];
+    }
 }
 
 pub fn simd_ifft(complex_data: &mut Vec<Complex<f64>>) {
     let mut data_re: Vec<f64> = complex_data.into_iter().map(|x| x.re).collect();
     let mut data_im: Vec<f64> = complex_data.into_iter().map(|x| x.im).collect();
     simd_rfft(&mut data_re, &mut data_im, true);
+    for i in 0..complex_data.len() {
+        complex_data[i].re = data_re[i];
+        complex_data[i].im = data_im[i];
+    }
 }
 
 pub fn rayon_simd_fft(complex_data: &mut Vec<Complex<f64>>) {
     let mut data_re: Vec<f64> = complex_data.into_iter().map(|x| x.re).collect();
     let mut data_im: Vec<f64> = complex_data.into_iter().map(|x| x.im).collect();
     rayon_simd_rfft(&mut data_re, &mut data_im, false);
+    for i in 0..complex_data.len() {
+        complex_data[i].re = data_re[i];
+        complex_data[i].im = data_im[i];
+    }
 }
 
 pub fn rayon_simd_ifft(complex_data: &mut Vec<Complex<f64>>) {
     let mut data_re: Vec<f64> = complex_data.into_iter().map(|x| x.re).collect();
     let mut data_im: Vec<f64> = complex_data.into_iter().map(|x| x.im).collect();
     rayon_simd_rfft(&mut data_re, &mut data_im, true);
+    for i in 0..complex_data.len() {
+        complex_data[i].re = data_re[i];
+        complex_data[i].im = data_im[i];
+    }
 }
