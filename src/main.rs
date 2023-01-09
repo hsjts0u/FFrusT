@@ -1,9 +1,9 @@
-mod intrinfft;
 mod pfft;
 mod rfft;
 mod sfft;
-mod splitfft;
 mod utils;
+mod splitfft;
+mod intrinsic;
 
 use num_complex::Complex;
 use rustfft::FftPlanner;
@@ -63,23 +63,26 @@ fn main() {
     );
     utils::dump_result("rayon", &mut result, output_filename).unwrap();
 
-    let mut result = bench_fft(
-        intrinfft::simd_fft,
-        intrinfft::simd_ifft,
-        benchname,
-        "SIMD",
-        bench_niter,
-    );
-    utils::dump_result("simd", &mut result, output_filename).unwrap();
+    #[cfg(target_arch = "x86_64")]
+    {
+        let mut result = bench_fft(
+            intrinfft::simd_fft,
+            intrinfft::simd_ifft,
+            benchname,
+            "SIMD",
+            bench_niter,
+        );
+        utils::dump_result("simd", &mut result, output_filename).unwrap();
 
-    let mut result = bench_fft(
-        intrinfft::rayon_simd_fft,
-        intrinfft::rayon_simd_ifft,
-        benchname,
-        "Rayon SIMD",
-        bench_niter,
-    );
-    utils::dump_result("rayon simd", &mut result, output_filename).unwrap();
+        let mut result = bench_fft(
+            intrinfft::rayon_simd_fft,
+            intrinfft::rayon_simd_ifft,
+            benchname,
+            "Rayon SIMD",
+            bench_niter,
+        );
+        utils::dump_result("rayon simd", &mut result, output_filename).unwrap();
+    }
 
     let mut result = bench_fft(
         splitfft::fft,
