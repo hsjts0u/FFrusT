@@ -1,5 +1,6 @@
 use ffrust::freq_scale;
-use ffrust::intrinfft;
+#[cfg(target_arch = "x86_64")]
+use ffrust::intrinsic;
 use ffrust::pfft;
 use ffrust::rfft;
 use ffrust::sfft;
@@ -53,16 +54,18 @@ fn test_rayon_fft() {
     run_fft_ifft(pfft::rayon_fft, pfft::rayon_ifft, "rayon_recon.wav");
 }
 
+#[cfg(target_arch = "x86_64")]
 #[test]
 fn test_simd_fft() {
-    run_fft_ifft(intrinfft::simd_fft, intrinfft::simd_ifft, "simd_recon.wav");
+    run_fft_ifft(intrinsic::simd_fft, intrinsic::simd_ifft, "simd_recon.wav");
 }
 
+#[cfg(target_arch = "x86_64")]
 #[test]
 fn test_rayon_simd_fft() {
     run_fft_ifft(
-        intrinfft::rayon_simd_fft,
-        intrinfft::rayon_simd_ifft,
+        intrinsic::rayon_simd_fft,
+        intrinsic::rayon_simd_ifft,
         "rayon_simd_recon.wav",
     );
 }
