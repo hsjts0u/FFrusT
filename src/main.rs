@@ -5,6 +5,9 @@ mod utils;
 mod splitfft;
 mod intrinsic;
 
+#[cfg(target_arch = "x86_64")]
+use intrinsic::intrinfft;
+
 use num_complex::Complex;
 use rustfft::FftPlanner;
 use std::env;
